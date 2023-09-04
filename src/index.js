@@ -2,12 +2,6 @@ const { Telegraf } = require('telegraf');
 require('dotenv').config();
 const cron = require('node-cron');
 
-// Pinging my site
-cron.schedule('*/10 * * * *', () => {
-    console.log('Pinging server');
-    fetch('https://aynt.onrender.com/');
-});
-
 let bot;
 if (process.env.LOCAL_SERVER) {
     bot = new Telegraf(process.env.BOT_TOKEN, { telegram: { apiRoot: process.env.LOCAL_SERVER } });
