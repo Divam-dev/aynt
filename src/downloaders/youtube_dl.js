@@ -25,14 +25,14 @@ async function downloadYoutubeVideo(ctx, url) {
         maxVideoSize = 50 * 1024 * 1024;
     }
 
-    // Calculate the size of the video in bytes
+    // Max video size
     const videoSize = parseInt(format.contentLength);
     if (videoSize > maxVideoSize) {
         await ctx.reply(`⛔ The video is too large to download (max ${maxVideoSize / (1024 * 1024)}MB).`);
         return;
     }
 
-    // Get video information for the preview message
+    // Get video information for preview message
     const videoName = info.videoDetails.title;
     const views = info.videoDetails.viewCount;
     const uploadDate = new Date(info.videoDetails.uploadDate).toLocaleDateString();
@@ -41,7 +41,7 @@ async function downloadYoutubeVideo(ctx, url) {
     duration.setSeconds(info.videoDetails.lengthSeconds);
     const durationStr = duration.toISOString().substr(11, 8);
 
-    // Construct the video thumbnail URL
+    // Video thumbnail URL
     const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAVrdfOFtJegCDgOPWIT2WTNA3XwQ`;
 
     // Send video preview message with photo
@@ -50,7 +50,6 @@ async function downloadYoutubeVideo(ctx, url) {
         parse_mode: 'HTML'
     });
 
-    // Start downloading
     await ctx.reply('✅ Start downloading...');
 
     if (format && audioFormat) {
@@ -63,7 +62,7 @@ async function downloadYoutubeVideo(ctx, url) {
         const videoWriteStream = fs.createWriteStream(videoPath);
         const audioWriteStream = fs.createWriteStream(audioPath);
 
-        // Use `pipeline` to merge the video and audio streams into their respective files
+        // Use pipeline to merge the video and audio streams
         const { pipeline } = require('stream');
         await Promise.all([
             new Promise((resolve, reject) => {
@@ -80,7 +79,7 @@ async function downloadYoutubeVideo(ctx, url) {
             }),
         ]);
 
-        // Now that the video and audio streams are saved as separate files, merge them using ffmpeg
+        // Merge video and audio streams using ffmpeg
         await new Promise((resolve, reject) => {
             ffmpeg()
                 .input(videoPath)
@@ -92,14 +91,13 @@ async function downloadYoutubeVideo(ctx, url) {
                 .save(path.join(__dirname, `${videoId}_merged.mp4`));
         });
 
-        // Send "Uploading" message after merging is complete
         await ctx.reply('✅ Uploading...');
 
         // Send the merged video to the user
         const mergedFilePath = path.join(__dirname, `${videoId}_merged.mp4`);
         await ctx.replyWithVideo({ source: fs.createReadStream(mergedFilePath) });
 
-        // Clean up the temporary files
+        // Clean up temporary files
         fs.unlinkSync(videoPath);
         fs.unlinkSync(audioPath);
         fs.unlinkSync(mergedFilePath);

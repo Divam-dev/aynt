@@ -27,7 +27,6 @@ module.exports = function(bot) {
 
     return async function downloadTikTokVideo(ctx, videoUrl) {
         try {
-            // Always use the full URL with https scheme
             const fullVideoUrl = `https://${videoUrl}`;
             const data = await getVideo(fullVideoUrl);
 
@@ -35,16 +34,16 @@ module.exports = function(bot) {
             const isAudio = mediaUrl.endsWith('.mp3');
 
             if (isAudio) {
-                // Construct a gallery-like message with multiple images
+                // Construct message with multiple images
                 const mediaArray = data.result.data.images.map(image => ({
                     type: 'photo',
                     media: { url: image }
                 }));
 
-                // Reply with the media group (gallery-like message)
+                // Reply with the media group
                 await ctx.replyWithMediaGroup(mediaArray);
 
-                // Send the audio without a button
+                // Send the audio
                 ctx.replyWithAudio(data.result.data.music);
             } else {
                 // Reply with video

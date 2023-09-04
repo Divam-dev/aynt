@@ -1,43 +1,50 @@
 const axios = require('axios');
 const fs = require('fs');
+const getTwitterMedia = require('get-twitter-media');
 
-async function downloadTwitterVideo(ctx, url) {
+async function downloadTwitterMedia(ctx, url) {
     try {
-        const response = await axios.get(`https://aemt.me/download/twtdl?url=${encodeURIComponent(url)}`);
+        let media = await getTwitterMedia(url, {buffer: true});
 
-        if (response.data.status && response.data.result.length > 0) {
-            const videoUrl = response.data.result[0].url;
-
-            // Download the video
-            const videoResponse = await axios({
-                method: 'get',
-                url: videoUrl,
-                responseType: 'stream',
-            });
-
-            // Save the video to a local file
-            const videoFilePath = 'downloaded_video.mp4';
-            const videoStream = fs.createWriteStream(videoFilePath);
-            videoResponse.data.pipe(videoStream);
-
-            videoStream.on('finish', async () => {
-                // Sending the downloaded video to the user
-                await ctx.replyWithVideo({ source: videoFilePath });
-
-                // Clean up: remove the downloaded file
-                fs.unlink(videoFilePath, (err) => {
-                    if (err) {
-                        console.error('Error deleting video file:', err);
-                    }
+        if (media.found) {
+            if (media.type === 'video' && media.url) {
+                // Download and send the video
+                const videoResponse = await axios({
+                    method: 'get',
+                    url: media.url,
+                    responseType: 'stream',
                 });
-            });
+
+                const videoFilePath = 'downloaded_video.mp4';
+                const videoStream = fs.createWriteStream(videoFilePath);
+                videoResponse.data.pipe(videoStream);
+
+                videoStream.on('finish', async () => {
+                    // Sending video to the user
+                    await ctx.replyWithVideo({ source: videoFilePath });
+
+                    // Remove the downloaded file
+                    fs.unlink(videoFilePath, (err) => {
+                        if (err) {
+                            console.error('Error deleting video file:', err);
+                        }
+                    });
+                });
+            } else if (media.type === 'image' && media.url) {
+                // Send the image
+                await ctx.replyWithPhoto({ url: media.url });
+            } else {
+                console.error('Error: Unsupported media type.');
+                await ctx.reply('Unsupported media type.');
+            }
         } else {
-            await ctx.reply('Error: Unable to download the Twitter video.');
+            console.error('Error: Twitter media not found.');
+            await ctx.reply('Unable to download Twitter media.');
         }
     } catch (error) {
-        console.error('Error downloading Twitter video:', error);
-        await ctx.reply('Error: Unable to download the Twitter video.');
+        console.error('Error downloading Twitter media:', error);
+        await ctx.reply('Unable to download Twitter media.');
     }
 }
 
-module.exports = downloadTwitterVideo;
+module.exports = downloadTwitterMedia;
