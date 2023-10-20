@@ -1,4 +1,7 @@
 <div align="center">
+   <a href="https://github.com/Prevter/FloatTool">
+      <img src="docs/Icon.svg" alt="Logo" width="80" height="80">
+   </a>
    <h3 align="center">AYNT Bot</h3>
    <p align="center">
       AYNT Bot is a Telegram bot designed to help users easily download videos from various social media platforms such as YouTube, TikTok, Instagram, and Twitter.
