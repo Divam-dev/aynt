@@ -2,9 +2,20 @@ const axios = require('axios');
 const fs = require('fs');
 const getTwitterMedia = require('get-twitter-media');
 
+async function convertXToTwitterURL(url) {
+    // Check if the URL is from x.com, and if so, convert it to twitter.com
+    if (url.includes('x.com')) {
+        url = url.replace('x.com', 'twitter.com');
+    }
+    return url;
+}
+
 async function downloadTwitterMedia(ctx, url) {
     try {
-        let media = await getTwitterMedia(url, {buffer: true});
+        // Convert x.com URL to twitter.com if needed
+        url = await convertXToTwitterURL(url);
+
+        let media = await getTwitterMedia(url, { buffer: true });
 
         if (media.found) {
             if (media.type === 'video' && media.url) {
