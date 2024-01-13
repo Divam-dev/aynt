@@ -50,8 +50,9 @@ bot.on('text', async (ctx) => {
 
     const youtubeUrlRegex = /(https?:\/\/(?:www\.)?youtube\.com\/watch\?v=|https?:\/\/youtu\.be\/|https?:\/\/(?:www\.)?youtube\.com\/shorts\/)([\w-]{11})/gi;
     const tiktokUrlRegex = /(https?:\/\/(?:www\.)?tiktok\.com\/(?:@[\w.-]+\/video\/[\w-]+|@[\w.-]+)|vm\.tiktok\.com\/[\w.-]+|vt\.tiktok\.com\/[\w.-]+)/gi;
-    const instagramUrlRegex = /(https?:\/\/(?:www\.)?instagram\.com\/(p|tv|reels|stories)\/[\w.-]+)/gi;
+    const instagramUrlRegex = /https?:\/\/(?:www\.)?instagram\.com\/(?:([^\/]+)\/)?(?:p|tv|reel|reels|stories)\/([\w.-]+)/gi;
     const twitterUrlRegex = /(https?:\/\/(?:www\.)?(?:twitter|x)\.com\/(?:[\w.-]+)\/status\/[\d]+|https?:\/\/t\.co\/[\w.-]+)/gi;
+
 
     const youtubeUrls = text.match(youtubeUrlRegex);
     const tiktokUrls = text.match(tiktokUrlRegex);

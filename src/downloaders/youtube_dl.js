@@ -2,6 +2,9 @@ const ytdl = require('ytdl-core');
 const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('ffmpeg-static');
+
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 async function downloadYoutubeVideo(ctx, url) {
     const videoId = ytdl.getURLVideoID(url);
