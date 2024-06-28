@@ -1,0 +1,11 @@
+{
+  "general": {
+    "delayTimeLimit": 5000,
+    "localServer": "",
+    "fileSize": "",
+    "about": {
+      "name": "@AYNT_Bot",
+      "support": "@DivamYT"
+    }
+  }
+}

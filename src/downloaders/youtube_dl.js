@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
+const { maxVideoSize } = require('../handlers/links_handler');
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -16,16 +17,6 @@ async function downloadYoutubeVideo(ctx, url) {
     if (info.videoDetails.isLiveContent) {
         await ctx.reply('⛔ This video is live, so it cannot be downloaded now. Please try again after the live stream is ended.');
         return;
-    }
-
-    // Calculate the size of the video in bytes
-    let maxVideoSize;
-    if (process.env.LOCAL_SERVER) {
-        // 2GB in bytes (2 * 1024 * 1024 * 1024)
-        maxVideoSize = 2 * 1024 * 1024 * 1024;
-    } else {
-        // 50MB in bytes (50 * 1024 * 1024)
-        maxVideoSize = 50 * 1024 * 1024;
     }
 
     // Max video size

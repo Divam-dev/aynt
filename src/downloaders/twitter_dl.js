@@ -1,6 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
-
+const { maxVideoSize } = require('../handlers/links_handler');
 // Function to get the media information from a Twitter URL.
 async function getTwitterMedia(url, options = {}) {
     let input = {};
@@ -63,15 +63,6 @@ async function convertXToTwitterURL(url) {
         url = url.replace('x.com', 'twitter.com');
     }
     return url;
-}
-
-let maxVideoSize;
-if (process.env.LOCAL_SERVER) {
-    // 2GB in bytes (2 * 1024 * 1024 * 1024)
-    maxVideoSize = 2 * 1024 * 1024 * 1024;
-} else {
-    // 50MB in bytes (50 * 1024 * 1024)
-    maxVideoSize = 50 * 1024 * 1024;
 }
 
 // Function to download Twitter media and send it through Telegram.

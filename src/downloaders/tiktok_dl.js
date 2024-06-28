@@ -1,6 +1,4 @@
 const axios = require('axios');
-const { Markup } = require('telegraf');
-
 // Adding useragent to avoid IP bans
 const headers = {
     'User-Agent': 'TikTok 26.2.0 rv:262018 (iPhone; iOS 14.4.2; en_US) Cronet'
@@ -9,8 +7,7 @@ const headers = {
 const getVideo = async (url) => {
     const API_URL = `https://aemt.me/download/tiktokslide?url=${encodeURIComponent(url)}`;
     const response = await axios.get(API_URL, { headers });
-    const data = response.data;
-    return data;
+    return response.data;
 };
 
 module.exports = function(bot) {
@@ -25,10 +22,12 @@ module.exports = function(bot) {
         }
     });
 
-    return async function downloadTikTokVideo(ctx, videoUrl) {
+    async function downloadTikTokVideo(ctx, videoUrl) {
         try {
-            const fullVideoUrl = `https://${videoUrl}`;
-            const data = await getVideo(fullVideoUrl);
+           // const fullVideoUrl = `https://${videoUrl}`;
+           // const data = await getVideo(fullVideoUrl);
+
+            const data = await getVideo(videoUrl);
 
             const mediaUrl = data.result.data.play;
             const isAudio = mediaUrl.endsWith('.mp3');
@@ -60,5 +59,7 @@ module.exports = function(bot) {
             console.error(err);
             ctx.reply('Error downloading media');
         }
-    };
+    }
+
+    return downloadTikTokVideo;
 };
